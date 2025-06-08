@@ -4,9 +4,9 @@
     <title>演習課題5-2：外部APIの呼び出しテスト</title>
 </head>
 <body>
-    <h1 id="msg">何かのAPI</h1>
+    <h1 id="msg">ラ、メーンのAPI</h1>
     <form name="apiform"><p>
-        何かのフォーム：<input type="text" name="form_data">
+        ラ、メーン屋の名前をローマ字で入力してね：<input type="text" name="form_data">
         <button type="button" id="btn1" onclick="some_api(this.form)">実行</button>
     </p></form>
     
@@ -14,8 +14,28 @@
     <script>
         async function some_api(myForm) {
             // ここにコードを書く
-            document.getElementById("result").innerHTML += myForm.form_data.value+"<br />";
+            const endpoint = "https://ramen-api.dev/shops/";
+
+            const url = endpoint + myForm.form_data.value;
+
+            const result = await fetch(url);
+            if(!result.ok){
+                console.log("受け取れてないよ");
+                document.getElementById("result").innerHTML += "名前が違うかも or 登録されてないかも<br/>"
+            }
+            else{
+                const source = await result.json();
+                
+                console.log(source);
+
+                const data =source.shop;
+                const txt = data.name + "のラ、メーンはこれだ"
+                const imgUrl = data.photos[0].url;
+
+                document.getElementById("result").innerHTML += txt + "<br/><img src=\"" + imgUrl + "\" width=\"300px\" height=\"300px\"><br/>";
+            }
             document.apiform.reset();
+            
         }
     </script>
 </body>
